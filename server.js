@@ -29,9 +29,7 @@ const port = 8080;
 
 const tickets = await Connection.open(mongoUri, 'tickets');
 
-
-
-function insertTicket(form_data, db) {
+async function insertTicket(form_data, db) {
     db.collection('tickets').insertOne({requestor: form_data.requestor, phone: form_data.phone, address: form_data.addr, building: form_data.building, urgency: form_data.urgency, due: form_data.due, instructions: form_data.instructions})           
 }
 

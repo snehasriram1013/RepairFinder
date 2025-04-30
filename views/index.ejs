@@ -10,33 +10,10 @@
 </head>
 <body>
 
-<header>
-
-    <div class="nav">
-        <button id="bar-button" class="menu">Menu</button>
-    </div>
-
-    <h1 id="page_title" class="nav_item">RepairFinder</h1>
-
-    <div id="user-menu" class="dropdown">
-        <button id="user-button" class="menu"><i id="user-icon" class="fa-solid fa-user"></i></button>
-        <div class="drop-content">
-          <a href="#">Link 1</a>
-          <a href="#">Link 2</a>
-          <a href="#">Link 3</a>
-          <a href="#">Link 4</a>
-        </div>
-    </div> 
-</header>
+    <%- include("partials/head.ejs") %>
 
 <main>
-    <div class="sidebar" id="sidenav">
-        <a href="form.html">Add Ticket</a>
-        <a href="#">Link 2</a>
-        <a href="#">Link 3</a>
-        <a href="#">Link 4</a>
-    </div>
-
+    <%- include("partials/sidebar.ejs") %>
     
     <h1>Tickets:</h1>
 
