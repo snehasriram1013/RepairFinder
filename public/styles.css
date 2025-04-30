@@ -33,6 +33,7 @@ header {
     width: 100%;
     display: inline-block;
     position: fixed;
+    z-index: 100;
 }
 
 main {
@@ -80,7 +81,6 @@ nav li {
     height: 100%;
     width: 0px;
     position: fixed;
-    z-index: -1;
     top: 0;
     left: 0;
     background-color: rgb(14, 14, 99);
@@ -93,11 +93,12 @@ nav li {
     padding: 15px 8px 15px 32px;
     text-decoration: none;
     font-size: 18px;
-    color: lightgray;
+    color: white;
     font-weight: bold;
     display: block;
     transition: 0.3s;
     white-space: nowrap;
+    padding: 1em;
 }
 
 #bar-button{
@@ -183,10 +184,11 @@ footer {
     background: lightgray;
     padding: 8px;
     font-family: helvetica;
-    font-size: 130%;
+    font-size: 120%;
     font-weight: bold;
     border: none;
     width:145%;
+    color:rgb(14, 14, 99);
 }
 
 #user-icon{
@@ -206,12 +208,17 @@ footer {
 }
 
 #sidenav a:hover{
-    background: white;
+    background: rgb(200, 227, 236);
+    color:rgb(14, 14, 99)
 }
 
 #user-menu{
     float:right;
-    margin: 1em 3em 1em 1em;
+    margin: 0.5em 4em 0em 0em;
+}
+
+#user-button{
+    padding: 1em;
 }
 
 #ticket-form{
