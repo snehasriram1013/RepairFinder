@@ -32,6 +32,25 @@ app.get('/', (req, res) => {
   res.render('index.ejs')
 })
 
+app.post("/form-input-post/", (req, res) => {
+    // Extract form data from the request body
+    const form_data = {
+        requestor: req.body.requestor,
+        phone: req.body.phone,
+        addr: req.body.addr,
+        building: req.body.building,
+        urgency: req.body.urgency,
+        due: req.body.due,
+        instructions: req.body.instructions
+    };
+
+    // Log the form data to the console
+    console.log('Form data received:', form_data);
+
+    // Send a response back to the client
+    res.send('Form data received successfully!');
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
