@@ -26,9 +26,10 @@ app.set('view engine', 'ejs');
 
 const mongoUri = cs304.getMongoUri();
 const port = 8080;
+// ================================================================
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.render('index.ejs')
 })
 
 app.listen(port, () => {
