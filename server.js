@@ -32,6 +32,10 @@ app.get('/', (req, res) => {
   res.render('index.ejs')
 })
 
+app.get('/new-ticket/', async (req, res) =>{
+        res.render('form.ejs')
+})
+
 app.post("/form-input-post/", (req, res) => {
     // Extract form data from the request body
     const form_data = {
