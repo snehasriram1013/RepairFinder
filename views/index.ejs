@@ -19,7 +19,7 @@
     <h1>Dashboard</h1>
         <% if (allTickets.length > 0) { %>
             <% allTickets.forEach(function(ticket) { %>
-                <section class="ticket">
+                <section class="ticket <%=ticket.urgency%>" >
                     <h3> <%= ticket.building %> </h3> 
                     <p> <%= ticket.urgency %> </p> 
                 </section>

@@ -57,6 +57,7 @@ app.post("/form-input-post/", async (req, res) => {
     };
     insertTicket(form_data);
 
+    console.log(form_data);
     // Log the form data to the console
     console.log('Form data received:', form_data);
 
