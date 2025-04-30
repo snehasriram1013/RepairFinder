@@ -37,6 +37,7 @@ p {
     display: inline-block;
     text-align: center;
     font-family: helvetica;
+    box-shadow: 1px 1px 3px 0px gray;
 }
 img {
     display: block;
@@ -51,6 +52,7 @@ header {
     display: inline-block;
     position: fixed;
     z-index: 100;
+    box-shadow: 0 3px 4px -2px gray;
 }
 
 main {
@@ -105,6 +107,7 @@ nav li {
     overflow-x: hidden;
     transition: 0.3s;
     padding-top: 6em;
+    box-shadow: 4px 0 2px -2px gray;
 }
 
 #sidenav a {
