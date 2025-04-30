@@ -32,15 +32,19 @@ async function insertTicket(form_data) {
   tickets.collection('tickets').insertOne({requestor: form_data.requestor, phone: form_data.phone, address: form_data.addr, building: form_data.building, urgency: form_data.urgency, due: form_data.due, instructions: form_data.instructions})           
 }
 
-app.get('/', (req, res) => {
-    res.render('index.ejs'); 
+app.get('/', async (req, res) => {
+    // res.render('index.ejs'); 
+    const tickets = await Connection.open(mongoUri, 'tickets');
+    ticket_data = tickets.collection("tickets").find({});
+    const results = await ticket_data.toArray();
+    res.render('index.ejs', {allTickets: results});
   });
 
 app.get('/new-ticket',(req, res) => {
     res.render('form.ejs'); 
 });
 
-app.post("/form-input-post/", (req, res) => {
+app.post("/form-input-post/", async (req, res) => {
     // Extract form data from the request body
     const form_data = {
         requestor: req.body.requestor,
@@ -56,8 +60,13 @@ app.post("/form-input-post/", (req, res) => {
     // Log the form data to the console
     console.log('Form data received:', form_data);
 
+    const tickets = await Connection.open(mongoUri, 'tickets');
+
     // Send a response back to the client
-    res.send('Form data received successfully!');
+    // res.send('Form data received successfully!');
+    ticket_data = tickets.collection("tickets").find({});
+    const results = await ticket_data.toArray();
+    res.render('index.ejs', {allTickets: results});
 });
 
 // postlude
