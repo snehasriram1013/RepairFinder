@@ -26,11 +26,18 @@ app.set('view engine', 'ejs');
 
 const mongoUri = cs304.getMongoUri();
 const port = 8080;
-// ================================================================
+
+const tickets = await Connection.open(mongoUri, 'tickets');
+
+
+
+function insertTicket(form_data, db) {
+    db.collection('tickets').insertOne({requestor: form_data.requestor, phone: form_data.phone, address: form_data.addr, building: form_data.building, urgency: form_data.urgency, due: form_data.due, instructions: form_data.instructions})           
+}
 
 app.get('/', (req, res) => {
-  res.render('index.ejs')
-})
+    res.render('rf_form'); 
+  });
 
 app.post("/form-input-post/", (req, res) => {
     // Extract form data from the request body
@@ -43,6 +50,7 @@ app.post("/form-input-post/", (req, res) => {
         due: req.body.due,
         instructions: req.body.instructions
     };
+    insertTicket(form_data, tickets);
 
     // Log the form data to the console
     console.log('Form data received:', form_data);
