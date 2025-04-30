@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <link rel="stylesheet" href="style.css">
+    <meta name=author content="Lily Millard">
+    <title>Home</title>
+</head>
+<body>
+
+<header>
+    <!-- 
+    <nav>
+        <ul> 
+            <li><a class = "nav_item" href = "index.html">Home</a></li>
+            <li><a class = "nav_item" href = "second.html">Details</a></li>
+        </ul>
+    </nav>
+    -->
+
+    <div class="nav">
+        <button id="bar-button" class="menu">Menu</button>
+    </div>
+
+    <h1 id="page_title" class="nav_item">RepairFinder</h1>
+
+    <div id="user-menu" class="dropdown">
+        <button id="user-button" class="menu"><i id="user-icon" class="fa-solid fa-user"></i></button>
+        <div class="drop-content">
+          <a href="#">Link 1</a>
+          <a href="#">Link 2</a>
+          <a href="#">Link 3</a>
+          <a href="#">Link 4</a>
+        </div>
+    </div> 
+</header>
+
+<main>
+    <div class="sidebar" id="sidenav">
+        <a href="form.html">Add Ticket</a>
+        <a href="#">Link 2</a>
+        <a href="#">Link 3</a>
+        <a href="#">Link 4</a>
+    </div>
+
+    
+    <h1>New Ticket</h1>
+
+    <section>
+        <form class="newticket" id="ticket-form" method="GET" action="">
+            <p><label>Requestor Name: <input name="requestor"></label></p>
+            <p><label>Phone #: <input type=tel name="phone"></label></p>
+            <p><label>E-mail address: <input type=email name="addr"></label></p>
+            <p><label>Building/Facility Name: <input name="building"></label></p>
+            <p><label>Size:
+                <select name="urgency">
+                    <option value="">Select urgency</option>
+                    <option value="minimal">1 (not urgent)</option>
+                    <option value="bit">2 (a bit urgent)</option>
+                    <option value="decent">3 (decently urgent)</option>
+                    <option value="pretty">4 (pretty urgent)</option>
+                    <option value="very">5 (very urgent)</option>
+                </select>
+            </label></p>
+            <p><label>Date of Request:
+                <input name="due" type="datetime-local">
+            </label></p>
+            <p><label>Repair Requested:
+                <textarea rows="4" cols="35" name="instructions"></textarea>
+            </label></p>
+            <p><button type="submit">Submit Ticket</button></p>
+        </form>
+    </section>
+
+
+</main>
+
+<footer>
+    <p id="foot_text">This site was created by Lily Millard, 4/1, 2025.</p>
+</footer>
+
+<!-- JavaScript at the bottom -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+<script src="https://cs.wellesley.edu/~anderson/js/bounds/bounds-plugin.js"></script>
+<script src="test.js"></script>
+<script src="https://kit.fontawesome.com/1d15fd4b72.js" crossorigin="anonymous"></script>
+</body>
+</html>
