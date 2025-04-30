@@ -19,8 +19,8 @@
     <h1>Tickets</h1>
         <% if (allTickets.length > 0) { %>
             <% allTickets.forEach(function(ticket) { %>
-                <section class="ticket"> <h2>Ticket</h2>
-                    <p> <%= ticket.building %> </p> 
+                <section class="ticket">
+                    <h3> <%= ticket.building %> </h3> 
                     <p> <%= ticket.urgency %> </p> 
                 </section>
             <% })} %>
