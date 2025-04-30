@@ -36,9 +36,9 @@ app.get('/', (req, res) => {
     res.render('index.ejs'); 
   });
 
-  app.get('/new-ticket', async (req, res) => {
+app.get('/new-ticket',(req, res) => {
     res.render('form.ejs'); 
-  });
+});
 
 app.post("/form-input-post/", (req, res) => {
     // Extract form data from the request body
@@ -59,10 +59,6 @@ app.post("/form-input-post/", (req, res) => {
     // Send a response back to the client
     res.send('Form data received successfully!');
 });
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
 
 // postlude
 
