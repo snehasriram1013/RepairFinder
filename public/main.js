@@ -15,7 +15,7 @@ function openNav() {
     $("main").css("margin-left", navWidth + "px");
     $("main").css('width', '80%');
     $("#bar-button").css('background-color', 'rgb(14, 14, 99)');
-    $("#bar-button").css('color', 'lightgray');
+    $("#bar-button").css('color', 'white');
     $("#bar-button").css('border-bottom', '1px solid lightgray');
     $("#page_title").css('margin-left', '31%');
     navClicked = true;

@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
     res.render('index.ejs'); 
   });
 
-  app.get('/new-ticket/', async (req, res) => {
+  app.get('/new-ticket', async (req, res) => {
     res.render('form.ejs'); 
   });
 
