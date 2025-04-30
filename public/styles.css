@@ -20,7 +20,24 @@ p {
     margin: 1em 3em 1em 3em;
     font-size: 20px;
 }
-
+.ticket-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust column size */
+    gap: 1em; /* Add spacing between grid items */
+    margin: 2em; /* Add some margin around the grid */
+}
+.ticket {
+    width: 200px;
+    height: 200px;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    margin: 1em 2em 1em 2em;
+    padding: 1em;
+    background-color: rgb(200, 227, 236);
+    display: inline-block;
+    text-align: center;
+    font-family: helvetica;
+}
 img {
     display: block;
     margin-left: auto;
