@@ -1,6 +1,11 @@
-// Get the navbar width for calculations
 const navWidth = 225;
 let navClicked = false;
+
+/*
+Arguments: None
+Return Value: None
+Effects: Updates page interface if menu opened
+*/
 
 function bar() {
     if (navClicked) {
@@ -10,6 +15,11 @@ function bar() {
     }
 }
 
+/*
+Arguments: None
+Return Value: None
+Effects: Narows page elements to accommodate sidebar menu
+*/
 function openNav() {
     $("#sidenav").width(navWidth);
     $("main").css("margin-left", navWidth + "px");
@@ -18,9 +28,15 @@ function openNav() {
     $("#bar-button").css('color', 'white');
     $("#bar-button").css('border-bottom', '1px solid lightgray');
     $("#page_title").css('margin-left', '31%');
+    $("footer").css('width', '85%');
     navClicked = true;
 }
 
+/*
+Arguments: None
+Return Value: None
+Effects: Resizes page elements when sidebar menu closed
+*/
 function closeNav() {
     $("#sidenav").width(0);
     $("#bar-button").css('color', 'rgb(14, 14, 99)');
@@ -29,16 +45,9 @@ function closeNav() {
     $("#page_title").css('margin-left', '23%');
     $("main").css("margin-left", "0px");
     $("main").css('width', '100%');
+    $("footer").css('width', '100%');
     navClicked = false;
 }
 
-// Close the nav when clicking on a link (optional)
-document.querySelectorAll('.sidenav a').forEach(link => {
-    link.addEventListener('click', () => {
-        if (window.innerWidth <= 768) { // Only auto-close on mobile
-            closeNav();
-        }
-    });
-});
-
+//Handler to open/close menu when menu putton clicked
 $("#bar-button").on("click", bar);
