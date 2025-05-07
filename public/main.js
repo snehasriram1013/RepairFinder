@@ -29,6 +29,7 @@ function openNav() {
     $("#bar-button").css('border-bottom', '1px solid lightgray');
     $("#page_title").css('margin-left', '31%');
     $("footer").css('width', '85%');
+    $("#bar").css('margin-left', '40%');
     navClicked = true;
 }
 
@@ -46,6 +47,7 @@ function closeNav() {
     $("main").css("margin-left", "0px");
     $("main").css('width', '100%');
     $("footer").css('width', '100%');
+    $("#bar").css('margin-left', '53%');
     navClicked = false;
 }
 

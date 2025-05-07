@@ -14,16 +14,12 @@
 
 <main>
     <%- include("partials/sidebar.ejs") %>
-    <%- include("partials/search.ejs") %>
-    <h1>Dashboard</h1>
-    <%- include("partials/error.ejs") %>
-        <% if (allTickets.length > 0) { %>
-            <% allTickets.forEach(function(ticket) { %>
-                <section class="ticket <%=ticket.urgency%>" >
-                    <h3><a href="/ticket/<%=ticket.id%>">Ticket</a></h3> 
-                    <p><%= ticket.building %></p>
-                </section>
-            <% })} %>
+    <h1>Ticket <%= id %></h1>
+    <p>Requestor: <%= requestor %></p>
+    <p>Building: <%= building %></p>
+    <p>Urgency: <%= urgency %></p>
+    <p>Due: <%= due %></p>
+    <p>Details: <%= instructions %></p>
 
 </main>
 

@@ -27,9 +27,13 @@ app.set('view engine', 'ejs');
 const mongoUri = cs304.getMongoUri();
 const port = 8080;
 
+const buildings = ['All', 'Severance', 'Claflin', 'Tower', 'Lake House', 'McAfee', 'Bates', 'Freeman', 'Pomeroy', 
+    'Cazenove', 'Shafer', 'Beebe', 'Munger', 'Science Center', 'Lulu', 'Clapp Library'];
+const urgencies = ['All', 'minimal', 'bit', 'decent', 'pretty', 'very'];
+
 async function insertTicket(form_data) {
   const tickets = await Connection.open(mongoUri, 'tickets');
-  tickets.collection('tickets').insertOne({requestor: form_data.requestor, phone: form_data.phone, address: form_data.addr, building: form_data.building, urgency: form_data.urgency, due: form_data.due, instructions: form_data.instructions})           
+  tickets.collection('tickets').insertOne({id: form_data.id, requestor: form_data.requestor, phone: form_data.phone, address: form_data.addr, building: form_data.building, urgency: form_data.urgency, due: form_data.due, instructions: form_data.instructions})           
 }
 
 app.get('/', async (req, res) => {
@@ -37,16 +41,77 @@ app.get('/', async (req, res) => {
     const tickets = await Connection.open(mongoUri, 'tickets');
     ticket_data = tickets.collection("tickets").find({});
     const results = await ticket_data.toArray();
-    res.render('index.ejs', {allTickets: results});
+    res.render('index.ejs', {allTickets: results, buildings: buildings, urgencyLevels: urgencies, error:''});
   });
 
 app.get('/new-ticket',(req, res) => {
     res.render('form.ejs'); 
 });
 
+app.get('/ticket/:ticket_id_number', async(req, res) => {
+    const ticket_id_number = req.params.ticket_id_number;
+    const db = await Connection.open(mongoUri, 'tickets');
+    const tickets = db.collection('tickets');
+    let ticket = await tickets.find({id: parseInt(ticket_id_number)}).toArray();
+    console.log(ticket);
+    return res.render('ticket-page.ejs',
+                      {id: `${ticket[0].id}`, 
+                       requestor: `${ticket[0].requestor}`,
+                       building: `${ticket[0].building}`,
+                       urgency: `${ticket[0].urgency}`,
+                       due: `${ticket[0].due}`,
+                       instructions: `${ticket[0].instructions}`}); 
+});
+
+app.get('/search/', async (req, res) => {   
+    //urgency always all
+    //building works for all, no results for specific
+
+    const query = req.query.search;
+    const build = req.query.building;
+    const urg = req.query.urgency;
+
+    console.log(build, urg);
+
+    const db = await Connection.open(mongoUri, 'tickets');
+    const tickets = db.collection("tickets");
+
+    let qVal = {$exists: true};
+    //if length of search is none: {}, else: use query
+    if (query.length > 1){
+        qVal = {$regex:`${query}`};
+    }
+
+    //if building selected: query, else: {}
+    let buildVal = {$exists: true};
+    if (build != "0"){
+        buildVal = buildings[Number(build)];
+    }
+    //if urgency selected: add query, else: {}
+    let urgVal = {$exists: true};
+    if (urg != "0"){
+        urgVal = urgencies[Number(urg)];
+    }
+
+    let ticketsList = await tickets.find({instructions: qVal, building: buildVal, urgency: urgVal}).toArray();
+
+    if (ticketsList.length == 0){
+        res.render('index.ejs', {allTickets: ticketsList, buildings: buildings, urgencyLevels: urgencies, error:'No results found'});
+    }else{
+        res.render('index.ejs', {allTickets: ticketsList, buildings: buildings, urgencyLevels: urgencies, error:''});
+    }
+
+});
+
 app.post("/form-input-post/", async (req, res) => {
     // Extract form data from the request body
+    const db = await Connection.open(mongoUri, 'tickets');
+    const tickets = db.collection("tickets");
+    let ticketsList = await tickets.find({}).toArray();
+    let idVal = ticketsList.length;
+
     const form_data = {
+        id: (idVal + 1),
         requestor: req.body.requestor,
         phone: req.body.phone,
         addr: req.body.addr,
@@ -57,17 +122,18 @@ app.post("/form-input-post/", async (req, res) => {
     };
     insertTicket(form_data);
 
+    //ask about this! better way to do id?
+    const newDBConn = await Connection.open(mongoUri, 'tickets');
+    const ticketsColl = newDBConn.collection("tickets");
+    let newTickets = await tickets.find({}).toArray();
+
     console.log(form_data);
     // Log the form data to the console
     console.log('Form data received:', form_data);
 
-    const tickets = await Connection.open(mongoUri, 'tickets');
-
     // Send a response back to the client
     // res.send('Form data received successfully!');
-    ticket_data = tickets.collection("tickets").find({});
-    const results = await ticket_data.toArray();
-    res.render('index.ejs', {allTickets: results});
+    res.render('index.ejs', {allTickets: newTickets, buildings: buildings, urgencyLevels: urgencies, error:''});
 });
 
 // postlude
