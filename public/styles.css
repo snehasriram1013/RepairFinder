@@ -284,3 +284,19 @@ footer {
     margin-left: 53%;
     transition: 0.3s;
 }
+
+a:visited{
+    color:rgb(53, 52, 52);
+  }
+
+a:active{
+color: rgb(53, 52, 52);
+}
+
+a:link{
+    color: rgb(53, 52, 52);
+  }
+
+.ticket:hover{
+    box-shadow: 3px 3px 5px 2px gray;
+}
