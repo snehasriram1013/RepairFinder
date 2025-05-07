@@ -119,11 +119,26 @@ app.get('/ticket/:ticket_id_number', async(req, res) => {
     console.log(ticket);
     return res.render('ticket-page.ejs',
                       {id: `${ticket[0].id}`, 
+                       image: `${ticket[0].path}`,
                        requestor: `${ticket[0].requestor}`,
                        building: `${ticket[0].building}`,
                        urgency: `${ticket[0].urgency}`,
                        due: `${ticket[0].due}`,
                        instructions: `${ticket[0].instructions}`}); 
+});
+
+app.get('/my-tickets', async(req, res) => {
+    const ticket_id_number = req.params.ticket_id_number;
+    const db = await Connection.open(mongoUri, 'tickets');
+    const tickets = db.collection('tickets');
+    //placeholder for when logins are working
+    let ticketsList = await tickets.find({requestor: {$exists: true}}).toArray();
+
+    if (ticketsList.length > 0){
+        res.render('my-tickets.ejs', {allTickets: ticketsList, buildings: buildings, urgencyLevels: urgencies, error:''})
+    }else{
+        res.render('my-tickets.ejs', {allTickets: ticketsList, buildings: buildings, urgencyLevels: urgencies, error:'You have no active tickets'})
+    }
 });
 
 app.get('/search/', async (req, res) => {   
@@ -172,10 +187,12 @@ app.post("/form-input-post/",  upload.single("file"), async (req, res) => {
     const db = await Connection.open(mongoUri, 'tickets');
     const tickets = db.collection("tickets");
     let ticketsList = await tickets.find({}).toArray();
+
+    //ask about this! better way to do id?
     let idVal = ticketsList.length;
 
    const form_data = {
-        id: (idVal + 1),
+       id: (idVal + 1),
        requestor: req.body.requestor,
        phone: req.body.phone,
        addr: req.body.addr,
@@ -189,13 +206,7 @@ app.post("/form-input-post/",  upload.single("file"), async (req, res) => {
 
 
    insertTicket(form_data);
-
-    //ask about this! better way to do id?
-    const newDBConn = await Connection.open(mongoUri, 'tickets');
-    const ticketsColl = newDBConn.collection("tickets");
-    let newTickets = await tickets.find({}).toArray();
-
-
+ 
     console.log(form_data);
     // Log the form data to the console
     console.log('Form data received:', form_data);
