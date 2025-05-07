@@ -53,3 +53,4 @@ function closeNav() {
 
 //Handler to open/close menu when menu putton clicked
 $("#bar-button").on("click", bar);
+
