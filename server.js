@@ -5,6 +5,7 @@ require("dotenv").config({ path: path.join(process.env.HOME, '.cs304env')});
 const express = require('express');
 const serveStatic = require('serve-static');
 const bodyParser = require('body-parser');
+// const multer = require("multer");
 
 const { Connection } = require('./connection');
 const cs304 = require('./cs304');
@@ -27,10 +28,40 @@ app.set('view engine', 'ejs');
 const mongoUri = cs304.getMongoUri();
 const port = 8080;
 
+// var upload = multer({ storage: storage,
+//     // max fileSize in bytes, causes an ugly error
+//     limits: {fileSize: 1_000 }});
+    
 async function insertTicket(form_data) {
   const tickets = await Connection.open(mongoUri, 'tickets');
   tickets.collection('tickets').insertOne({requestor: form_data.requestor, phone: form_data.phone, address: form_data.addr, building: form_data.building, urgency: form_data.urgency, due: form_data.due, instructions: form_data.instructions})           
 }
+
+// function timeString(dateObj) {
+//     if( !dateObj) {
+//         dateObj = new Date();
+//     }
+//     // convert val to two-digit string
+//     d2 = (val) => val < 10 ? '0'+val : ''+val;
+//     let hh = d2(dateObj.getHours())
+//     let mm = d2(dateObj.getMinutes())
+//     let ss = d2(dateObj.getSeconds())
+//     return hh+mm+ss
+// }
+
+// app.use('/uploads', express.static('uploads'));
+
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, 'uploads')
+//     },
+//     filename: function (req, file, cb) {
+//         let parts = file.originalname.split('.');
+//         let ext = parts[parts.length-1];
+//         let hhmmss = timeString();
+//         cb(null, file.fieldname + '-' + hhmmss + '.' + ext);
+//     }
+//   })
 
 app.get('/', async (req, res) => {
     // res.render('index.ejs'); 
@@ -67,7 +98,7 @@ app.post("/form-input-post/", async (req, res) => {
     // res.send('Form data received successfully!');
     ticket_data = tickets.collection("tickets").find({});
     const results = await ticket_data.toArray();
-    res.render('index.ejs', {allTickets: results});
+    res.redirect('/');
 });
 
 // postlude
