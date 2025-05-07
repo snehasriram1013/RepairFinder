@@ -18,7 +18,7 @@
     <h1>New Ticket</h1>
 
     <section>
-        <form class="newticket" id="ticket-form" method="POST" action="/form-input-post/">
+        <form class="newticket" id="ticket-form" method="POST" action="/form-input-post/" enctype="multipart/form-data">
             <p><label>Requestor Name: <input name="requestor"></label></p>
             <p><label>Phone #: <input type=tel name="phone"></label></p>
             <p><label>E-mail address: <input type=email name="addr"></label></p>
@@ -58,6 +58,15 @@
             <p><label>Repair Requested:
                 <textarea rows="4" cols="35" name="instructions"></textarea>
             </label></p>
+            <p>
+                <label for="title">title
+                    <input type="text" name="title" placeholder="photo title">
+                </label>
+            </p><p>
+                <label>file
+                    <input type="file" accept="image/*" name="file" >
+                </label>
+            </p><p>
             <p><button type="submit">Submit Ticket</button></p>
         </form>
     </section>

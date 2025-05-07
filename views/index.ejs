@@ -22,6 +22,10 @@
                 <section class="ticket <%=ticket.urgency%>" >
                     <h3><a href="/ticket/<%=ticket.id%>">Ticket</a></h3> 
                     <p><%= ticket.building %></p>
+
+                     <% if (ticket.path) { %>
+                            <img class="ticketImg" src="<%=ticket.path%>" alt="Uploaded file for <%= ticket.title %>">
+                    <% } %>
                 </section>
             <% })} %>
 
