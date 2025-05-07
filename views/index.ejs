@@ -21,7 +21,7 @@
             <% allTickets.forEach(function(ticket) { %>
                 <a href="/ticket/<%=ticket.id%>">
                 <section class="ticket <%=ticket.urgency%>" >
-                    <h3>Ticket <%= ticket.id %></h3>
+                    <h3>Ticket #<%= ticket.id %></h3>
                     <p><%= ticket.building%><p> 
                      <% if (ticket.path) { %>
                             <img class="ticketImg" src="<%=ticket.path%>" alt="file: <%= ticket.title %>">
