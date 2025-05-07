@@ -26,6 +26,13 @@
                      <% if (ticket.path) { %>
                             <img class="ticketImg" src="<%=ticket.path%>" alt="file: <%= ticket.title %>">
                     <% } %>
+                    
+                    <form method="POST" action='/delete-ticket'>
+                        <input type="checkbox" id="dataResolved" name="dataResolved" value="resolved?">
+                        <label for="dataResolved">resolved?</label>
+                        <input type="hidden" name="ticketId" value="<%= ticket.id %>">
+                        <button type="submit">Submit</button>
+                    </form>
                 </section>
                 </a>
             <% })} %>

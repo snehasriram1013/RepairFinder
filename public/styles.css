@@ -46,8 +46,8 @@ p {
     margin: 2em; 
 }
 .ticket {
-    width: 210px;
-    height: 210px;
+    width: 250px;
+    height: 250px;
     border: 2px solid lightgray;
     border-radius: 3px;
     margin: 1em 2em 1em 2em;
@@ -59,12 +59,13 @@ p {
 }
 
 .ticketImg {
-    width: 50%;
-    height: 50%;
+    width: 45%;
+    height: 45%;
     border-radius: 3px;
     margin-bottom: 1em;
     object-fit: cover;
 }
+
 img {
     display: block;
     margin-left: auto;
