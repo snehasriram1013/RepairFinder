@@ -203,8 +203,6 @@ app.post("/form-input-post/",  upload.single("file"), async (req, res) => {
        title: req.body.title,
        file: req.file
    };
-
-
    insertTicket(form_data);
  
     console.log(form_data);
@@ -215,7 +213,17 @@ app.post("/form-input-post/",  upload.single("file"), async (req, res) => {
    res.redirect('/');
 });
 
+//to delete a ticket from the database and redisplay
+app.post('/delete-ticket', async (req, res) => {
+    console.log("DELETING TICKET");
+    const ticketId = req.body.ticketId;
+    const isResolved = req.body.dataResolved === 'resolved?';
+    const db = await Connection.open(mongoUri, 'tickets');
+    const tickets = db.collection('tickets');
+    tickets.deleteOne({ id: parseInt(ticketId) })
 
+    res.redirect('/');
+});
 // postlude
 
 
