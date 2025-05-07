@@ -57,6 +57,14 @@ p {
     font-family: helvetica;
     box-shadow: 1px 1px 3px 0px gray;
 }
+
+.ticketImg {
+    width: 50%;
+    height: 50%;
+    border-radius: 3px;
+    margin-bottom: 1em;
+    object-fit: cover;
+}
 img {
     display: block;
     margin-left: auto;
