@@ -1,16 +1,25 @@
-
+<!-- views/partials/head.ejs -->
 <header>
     <div class="nav">
-        <button id="bar-button" class="menu">Menu</button>
+      <button id="bar-button" class="menu">Menu</button>
     </div>
-
+  
     <h1 id="page_title" class="nav_item">RepairFinder</h1>
-
+  
     <div id="user-menu" class="dropdown">
-        <button id="user-button" class="menu"><i id="user-icon" class="fa-solid fa-user"></i></button>
-        <div class="drop-content">
-          <a href="#">Log Out</a>
-          <a href="#">Account Info</a>
-        </div>
-    </div> 
-</header>
+      <button id="user-button" class="menu">
+        <i id="user-icon" class="fa-solid fa-user"></i>
+      </button>
+      <div id="user-dropdown" class="drop-content">
+        <% if (currentUser) { %>
+          <a href="/account">Account Info</a>
+          <a href="/logout">Log Out</a>
+        <% } else { %>
+          <a href="/login">Log In</a>
+          <a href="/register">Sign Up</a>
+        <% } %>
+      </div>
+    </div>
+  </header>
+  
+  

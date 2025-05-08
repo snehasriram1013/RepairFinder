@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css"
+  />
+  <link rel="stylesheet" href="/styles.css" />
+  <meta name="author" content="Lily Millard" />
+  <title>Log In</title>
+</head>
+<body>
+  <%- include("partials/head.ejs") %>
+  <main>
+    <%- include("partials/sidebar.ejs") %>
+    <h1>Log In</h1>
+    <form action="/login" method="POST">
+      <p>
+        <label>Email:<br/>
+          <input name="email" type="email" placeholder="you@example.com" required/>
+        </label>
+      </p>
+      <p>
+        <label>Password:<br/>
+          <input name="password" type="password" placeholder="Your password" required/>
+        </label>
+      </p>
+      <button type="submit">Log In</button>
+      <p style="color:red;"><%= error %></p>
+    </form>
+    <p>
+      Don’t have an account?
+      <a href="/register">Register here</a>
+    </p>
+  </main>
+  <%- include("partials/foot.ejs") %>
+</body>
+</html>
