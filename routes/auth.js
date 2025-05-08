@@ -1,21 +1,24 @@
 // routes/auth.js
-const express                 = require('express');
-const bcrypt                  = require('bcrypt');
+const express                       = require('express');
+const bcrypt                        = require('bcrypt');
 const { createUser, findUserByEmail } = require('../models/user');
-const router                  = express.Router();
+const router                        = express.Router();
 
 // ─── Middleware ──────────────────────────────────────────────────────────────
 function requireLogin(req, res, next) {
-  return req.session.user
+  return req.session.loggedIn
     ? next()
     : res.redirect('/login');
 }
 function requireAdmin(req, res, next) {
-  return req.session.user?.role === 'admin'
-    ? next()
-    : res.status(403).send('Forbidden');
+  if (req.session.user?.role === 'admin') {
+    return next();
+  }
+  // Redirect home with an `error` query parameter
+  return res.redirect(
+    '/?error=' + encodeURIComponent('Access denied: Admins only.')
+  );
 }
-
 // ─── Registration ─────────────────────────────────────────────────────────────
 router.get('/register', (req, res) =>
   res.render('register.ejs', { error: '' })
@@ -42,21 +45,26 @@ router.post('/login', async (req, res) => {
   if (!user || !(await bcrypt.compare(password, user.hash))) {
     return res.render('login.ejs', { error: 'Invalid credentials.' });
   }
+
+  // **Inside** the login handler: mark session as logged-in
+  req.session.loggedIn = true;
   req.session.user = {
     id:    user._id,
     name:  user.name,
     role:  user.role,
     email: user.email
   };
+
   res.redirect('/');
 });
 
 // ─── Logout ──────────────────────────────────────────────────────────────────
-// Support GET so <a href="/logout"> works:
+// GET handler for <a href="/logout">
 router.get('/logout', (req, res) => {
+  // **Inside** the logout handler: destroy session
   req.session.destroy(() => res.redirect('/login'));
 });
-// And still support POST if you have form-based requests:
+// POST handler if you still use a form-based logout:
 router.post('/logout', (req, res) => {
   req.session.destroy(() => res.redirect('/login'));
 });
@@ -64,4 +72,4 @@ router.post('/logout', (req, res) => {
 // ─── Exports ─────────────────────────────────────────────────────────────────
 router.requireLogin  = requireLogin;
 router.requireAdmin  = requireAdmin;
-module.exports      = router;
+module.exports       = router;

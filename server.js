@@ -1,45 +1,46 @@
+// server.js
 // Sneha Sriram made this file
 
 const path        = require('path');
-require("dotenv").config({ path: path.join(process.env.HOME, '.cs304env')});
+require("dotenv").config({ path: path.join(process.env.HOME, '.cs304env') });
 const express     = require('express');
 const serveStatic = require('serve-static');
 const bodyParser  = require('body-parser');
 const multer      = require('multer');
+const session     = require('express-session');
+const MongoStore  = require('connect-mongo');
 
 const { Connection } = require('./connection');
 const cs304          = require('./cs304');
-const { title }      = require('process');
-
-// AUTH imports
-const session    = require('express-session');
-const MongoStore = require('connect-mongo');
-const authRouter = require('./routes/auth');
+const authRouter     = require('./routes/auth');
 const { requireLogin, requireAdmin } = authRouter;
 
-// configure multer (original)
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads');
-    },
-    filename: function (req, file, cb) {
-        let parts = file.originalname.split('.');
-        let ext = parts[parts.length-1];
-        let hhmmss = timeString();
-        cb(null, file.fieldname + '-' + hhmmss + '.' + ext);
-    }
+// Multer setup (unchanged)
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads'),
+  filename:    (req, file, cb) => {
+    const parts  = file.originalname.split('.');
+    const ext    = parts.pop();
+    const hhmmss = (() => {
+      const d2 = v => v < 10 ? '0'+v : v;
+      const now = new Date();
+      return d2(now.getHours()) + d2(now.getMinutes()) + d2(now.getSeconds());
+    })();
+    cb(null, `${file.fieldname}-${hhmmss}.${ext}`);
+  }
 });
-var upload = multer({ storage: storage,
-   // max fileSize in bytes, causes an ugly error
-   limits: {fileSize: 1_000_000 }});
+const upload = multer({ storage, limits: { fileSize: 1_000_000 } });
 
-// Create and configure the app
-const app = express();
+// Create app & get Mongo URI
+const app      = express();
 const mongoUri = cs304.getMongoUri();
-const port = cs304.getPort();
+const port     = cs304.getPort(8080);
 
+// 1) Serve static assets BEFORE sessions
+app.use(serveStatic('public'));
+app.use('/uploads', express.static('uploads'));
 
-// ─── SESSION & AUTH SETUP (after mongoUri) ─────────────────────────────────
+// 2) Single session setup
 app.use(session({
   secret:            process.env.SESSION_SECRET || 'super-secret',
   resave:            false,
@@ -47,195 +48,154 @@ app.use(session({
   store:             MongoStore.create({ mongoUrl: mongoUri }),
   cookie:            { maxAge: 24 * 60 * 60 * 1000 }
 }));
+
+// 3) Expose currentUser to views
 app.use((req, res, next) => {
   res.locals.currentUser = req.session.user || null;
   next();
 });
-app.use(authRouter);
 
-app.use(cs304.logStartRequest);
-
-// This handles POST data
+// 4) Body parsers and auth routes
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(authRouter);
 
-app.use(cs304.logRequestData);  // tell the user about any request data
+// Helpers & constants
+const buildings = ['All','Severance','Claflin','Tower','Lake House','McAfee','Bates',
+  'Freeman','Pomeroy','Cazenove','Shafer','Beebe','Munger','Science Center','Lulu','Clapp Library'];
+const urgencies  = ['All','minimal','bit','decent','pretty','very'];
 
-app.use(serveStatic('public'));
-app.set('view engine', 'ejs');
-app.use('/uploads', express.static('uploads'));
-
-const buildings = ['All', 'Severance', 'Claflin', 'Tower', 'Lake House', 'McAfee', 'Bates', 'Freeman', 'Pomeroy',
-    'Cazenove', 'Shafer', 'Beebe', 'Munger', 'Science Center', 'Lulu', 'Clapp Library'];
-const urgencies = ['All', 'minimal', 'bit', 'decent', 'pretty', 'very'];
-
-async function insertTicket(form_data) {
- const tickets = await Connection.open(mongoUri, 'tickets');
- tickets.collection('tickets').insertOne({
-     id: form_data.id,
-     requestor: form_data.requestor,
-     phone: form_data.phone,
-     address: form_data.addr,
-     building: form_data.building,
-     urgency: form_data.urgency,
-     due: form_data.due,
-     instructions: form_data.instructions,
-     title: form_data.title,
-     path: '/uploads/' + form_data.file.filename
- });         
+async function insertTicket(data) {
+  const db      = await Connection.open(mongoUri, 'tickets');
+  const tickets = db.collection('tickets');
+  await tickets.insertOne({
+    id:           data.id,
+    requestor:    data.requestor,
+    phone:        data.phone,
+    address:      data.addr,
+    building:     data.building,
+    urgency:      data.urgency,
+    due:          data.due,
+    instructions: data.instructions,
+    title:        data.title,
+    path:         '/uploads/' + data.file.filename
+  });
 }
 
-function timeString(dateObj) {
-   if (!dateObj) dateObj = new Date();
-   const d2 = val => val < 10 ? '0'+val : ''+val;
-   return d2(dateObj.getHours()) + d2(dateObj.getMinutes()) + d2(dateObj.getSeconds());
-}
+// 5) Debug endpoint (temporary)
+app.get('/_debug-session', (req, res) => res.json(req.session));
 
-// ─── ROUTES ────────────────────────────────────────────────────────────────
+// ─── Routes ────────────────────────────────────────────────────────────────
 
-// Home / Dashboard (students & guests)
+// Home / Dashboard
 app.get('/', async (req, res) => {
-    const tickets = await Connection.open(mongoUri, 'tickets');
-    const results = await tickets.collection('tickets').find({}).toArray();
-    res.render('index.ejs', {allTickets: results, buildings, urgencyLevels: urgencies, error: ''});
+  const db      = await Connection.open(mongoUri, 'tickets');
+  const all     = await db.collection('tickets').find({}).toArray();
+  res.render('index.ejs', {
+    allTickets:    all,
+    buildings,
+    urgencyLevels: urgencies,
+    error:         req.query.error || ''
+  });
 });
 
-// Student: New Ticket & My Tickets
-app.get('/new-ticket', requireLogin, (req, res) => {
-   res.render('form.ejs');
-});
+// About
+app.get('/about', (req, res) => res.render('about.ejs'));
+
+// Account Info
+app.get('/account', requireLogin, (req, res) =>
+  res.render('account.ejs', { user: req.session.user })
+);
+
+// Student-only
+app.get('/new-ticket', requireLogin, (req, res) => res.render('form.ejs'));
 app.post('/form-input-post/', requireLogin, upload.single('file'), async (req, res) => {
-   const tickets = await Connection.open(mongoUri, 'tickets');
-   const list = await tickets.collection('tickets').find({}).toArray();
-   const idVal = list.length + 1;
-   const form_data = { ...req.body, id: idVal, file: req.file };
-   await insertTicket(form_data);
-   res.redirect('/');
+  const db      = await Connection.open(mongoUri, 'tickets');
+  const list    = await db.collection('tickets').find({}).toArray();
+  const idVal   = list.length + 1;
+  await insertTicket({ ...req.body, id: idVal, file: req.file });
+  res.redirect('/');
 });
 app.get('/my-tickets', requireLogin, async (req, res) => {
-    const tickets = await Connection.open(mongoUri, 'tickets');
-    let ticketsList = await tickets.collection('tickets').find({requestor: req.session.user.name}).toArray();
-    const error = ticketsList.length > 0 ? '' : 'You have no active tickets';
-    res.render('my-tickets.ejs', {allTickets: ticketsList, buildings, urgencyLevels: urgencies, error});
-});
-
-// Ticket detail
-app.get('/ticket/:ticket_id_number', async(req, res) => {
-    const id = parseInt(req.params.ticket_id_number);
-    const tickets = await Connection.open(mongoUri, 'tickets');
-    let ticket = await tickets.collection('tickets').findOne({id});
-    res.render('ticket-page.ejs', ticket);
+  const db    = await Connection.open(mongoUri, 'tickets');
+  const list  = await db.collection('tickets')
+                        .find({ requestor: req.session.user.name })
+                        .toArray();
+  res.render('my-tickets.ejs', {
+    allTickets:    list,
+    buildings,
+    urgencyLevels: urgencies,
+    error:         list.length ? '' : 'You have no active tickets'
+  });
 });
 
 // Search
-app.get('/search/', async (req, res) => {   
-    const {search, building, urgency} = req.query;
-    const tickets = await Connection.open(mongoUri, 'tickets');
-    const col = tickets.collection('tickets');
-    let q = {};
-    if (search && search.length > 1) q.instructions = {$regex: search};
-    if (building && building !== 'All') q.building = building;
-    if (urgency && urgency !== 'All') q.urgency = urgencies[Number(urgency)];
-    let ticketsList = await col.find(q).toArray();
-    const error = ticketsList.length === 0 ? 'No results found' : '';
-    res.render('index.ejs', {allTickets: ticketsList, buildings, urgencyLevels: urgencies, error});
+app.get('/search', async (req, res) => {
+  const { search, building, urgency } = req.query;
+  const db   = await Connection.open(mongoUri, 'tickets');
+  const col  = db.collection('tickets');
+  const q    = {};
+  if (search && search.length>1) q.instructions = { $regex: search, $options: 'i' };
+  if (building && building!=='All') q.building = building;
+  if (urgency && urgency!=='All')   q.urgency  = urgency;
+  const found = await col.find(q).toArray();
+  res.render('index.ejs', {
+    allTickets:    found,
+    buildings,
+    urgencyLevels: urgencies,
+    error:         found.length ? '' : 'No results found'
+  });
 });
 
-
-// Public About
-app.get('/about', (req, res) => res.render('about.ejs'));
-
-app.post("/form-input-post/",  upload.single("file"), async (req, res) => {
-   // Extract form data from the request body
-    const db = await Connection.open(mongoUri, 'tickets');
-    const tickets = db.collection("tickets");
-    let ticketsList = await tickets.find({}).toArray();
-
-    //ask about this! better way to do id?
-    let idVal = ticketsList.length;
-
-   const form_data = {
-       id: (idVal + 1),
-       requestor: req.body.requestor,
-       phone: req.body.phone,
-       addr: req.body.addr,
-       building: req.body.building,
-       urgency: req.body.urgency,
-       due: req.body.due,
-       instructions: req.body.instructions,
-       title: req.body.title,
-       file: req.file
-   };
-   insertTicket(form_data);
- 
-    console.log(form_data);
-    // Log the form data to the console
-    console.log('Form data received:', form_data);
-
-   // Send a response back to the client
-   res.redirect('/');
-});
-
-//to delete a ticket from the database and redisplay
+// Delete
 app.post('/delete-ticket', async (req, res) => {
-    console.log("DELETING TICKET");
-    const ticketId = req.body.ticketId;
-    // const isResolved = req.body.dataResolved === 'resolved?';
-    const db = await Connection.open(mongoUri, 'tickets');
-    const tickets = db.collection('tickets');
-    tickets.deleteOne({ id: parseInt(ticketId) })
-
-    res.redirect('/');
+  const id      = parseInt(req.body.ticketId, 10);
+  const db      = await Connection.open(mongoUri, 'tickets');
+  await db.collection('tickets').deleteOne({ id });
+  res.redirect('/');
 });
 
-//to update a ticket in the database and redisplay
-app.post('/update-ticket', upload.single("updated_file"), async (req, res) => {
-    console.log("UPDATING TICKET");
-    console.log(req.body);
-    const ticketId = req.body.ticketId;
-    const db = await Connection.open(mongoUri, 'tickets');
-    const tickets = db.collection('tickets');
-    
-    const updateFields = {};
-    if (req.body.requestor) updateFields.requestor = req.body.requestor;
-    if (req.body.building) updateFields.building = req.body.building;
-    if (req.body.urgency) updateFields.urgency = req.body.urgency;
-    if (req.body.due) updateFields.due = req.body.due;
-    if (req.body.instructions) updateFields.instructions = req.body.instructions;
-    if (req.body.title) updateFields.title = req.body.title;
-    if (req.file) updateFields.path = "/uploads/" + req.file.filename;
-
-    // Update the ticket in the database
-    await tickets.updateOne(
-        { id: parseInt(ticketId) },
-        { $set: updateFields }
-    );  
-
-    res.redirect('/');
-});
-// postlude
-
-
-// Account Info
-app.get('/account', requireLogin, (req, res) => {
-    res.render('account.ejs', { user: req.session.user });
+// Update
+app.post('/update-ticket', requireLogin, upload.single('updated_file'), async (req, res) => {
+  const ticketId = parseInt(req.body.ticketId,10);
+  const db       = await Connection.open(mongoUri, 'tickets');
+  const tickets  = db.collection('tickets');
+  const update   = {};
+  ['requestor','building','urgency','due','instructions','title']
+    .forEach(f=> req.body[f] && (update[f]=req.body[f]));
+  if (req.file) update.path = '/uploads/' + req.file.filename;
+  await tickets.updateOne({ id: ticketId }, { $set: update });
+  res.redirect('/');
 });
 
-// Priority queue of tickets for admin (initial iteration, unprotected)
-app.get('/admin-dashboard', async (req, res) => {
-  const tickets = await Connection.open(mongoUri, 'tickets');
-  let allTickets = await tickets.collection('tickets').find({}).toArray();
-  const priorityMap = { minimal:1, bit:2, decent:3, pretty:4, very:5 };
-  allTickets.sort((a,b) => priorityMap[b.urgency] - priorityMap[a.urgency]);
-  res.render('admin-dashboard.ejs', { allTickets, buildings, urgencyLevels: urgencies });
+// Ticket detail
+app.get('/ticket/:ticket_id_number', async (req, res) => {
+  const id     = parseInt(req.params.ticket_id_number,10);
+  const db     = await Connection.open(mongoUri, 'tickets');
+  const ticket = await db.collection('tickets').findOne({ id });
+  res.render('ticket-page.ejs', ticket);
 });
-// Later: Protect admin route with requireLogin, requireAdmin
 
+// Admin-only
+app.get('/admin-dashboard',
+  requireLogin, requireAdmin,
+  async (req, res) => {
+    const db  = await Connection.open(mongoUri, 'tickets');
+    const all = await db.collection('tickets').find({}).toArray();
+    // sort by urgency priority if desired…
+    res.render('admin-dashboard.ejs', {
+      allTickets:    all,
+      buildings,
+      urgencyLevels: urgencies
+    });
+  }
+);
+
+
+  
 // this is last, because it never returns
 app.listen(port, function() {
-   console.log(`listening on ${port}`);
-   console.log(`visit http://cs.wellesley.edu:${port}/`);
-   console.log('^C to exit');
+  console.log(`listening on ${port}`);
+  console.log(`visit http://cs.wellesley.edu:${port}/`);
+  console.log('^C to exit');
 });
-
-
