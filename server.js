@@ -141,29 +141,80 @@ app.get('/search/', async (req, res) => {
     res.render('index.ejs', {allTickets: ticketsList, buildings, urgencyLevels: urgencies, error});
 });
 
-// Delete ticket
-app.post('/delete-ticket', async (req, res) => {
-    const ticketId = parseInt(req.body.ticketId);
-    const tickets = await Connection.open(mongoUri, 'tickets');
-    await tickets.collection('tickets').deleteOne({ id: ticketId });
-    res.redirect('/');
-});
-
-// Update ticket
-app.post('/update-ticket', requireLogin, upload.single('updated_file'), async (req, res) => {
-    const ticketId = parseInt(req.body.ticketId);
-    const tickets = await Connection.open(mongoUri, 'tickets');
-    const updateFields = {};
-    ['requestor','building','urgency','due','instructions','title'].forEach(f => {
-        if (req.body[f]) updateFields[f] = req.body[f];
-    });
-    if (req.file) updateFields.path = '/uploads/' + req.file.filename;
-    await tickets.collection('tickets').updateOne({id: ticketId}, {$set: updateFields});
-    res.redirect('/');
-});
 
 // Public About
 app.get('/about', (req, res) => res.render('about.ejs'));
+
+app.post("/form-input-post/",  upload.single("file"), async (req, res) => {
+   // Extract form data from the request body
+    const db = await Connection.open(mongoUri, 'tickets');
+    const tickets = db.collection("tickets");
+    let ticketsList = await tickets.find({}).toArray();
+
+    //ask about this! better way to do id?
+    let idVal = ticketsList.length;
+
+   const form_data = {
+       id: (idVal + 1),
+       requestor: req.body.requestor,
+       phone: req.body.phone,
+       addr: req.body.addr,
+       building: req.body.building,
+       urgency: req.body.urgency,
+       due: req.body.due,
+       instructions: req.body.instructions,
+       title: req.body.title,
+       file: req.file
+   };
+   insertTicket(form_data);
+ 
+    console.log(form_data);
+    // Log the form data to the console
+    console.log('Form data received:', form_data);
+
+   // Send a response back to the client
+   res.redirect('/');
+});
+
+//to delete a ticket from the database and redisplay
+app.post('/delete-ticket', async (req, res) => {
+    console.log("DELETING TICKET");
+    const ticketId = req.body.ticketId;
+    // const isResolved = req.body.dataResolved === 'resolved?';
+    const db = await Connection.open(mongoUri, 'tickets');
+    const tickets = db.collection('tickets');
+    tickets.deleteOne({ id: parseInt(ticketId) })
+
+    res.redirect('/');
+});
+
+//to update a ticket in the database and redisplay
+app.post('/update-ticket', upload.single("updated_file"), async (req, res) => {
+    console.log("UPDATING TICKET");
+    console.log(req.body);
+    const ticketId = req.body.ticketId;
+    const db = await Connection.open(mongoUri, 'tickets');
+    const tickets = db.collection('tickets');
+    
+    const updateFields = {};
+    if (req.body.requestor) updateFields.requestor = req.body.requestor;
+    if (req.body.building) updateFields.building = req.body.building;
+    if (req.body.urgency) updateFields.urgency = req.body.urgency;
+    if (req.body.due) updateFields.due = req.body.due;
+    if (req.body.instructions) updateFields.instructions = req.body.instructions;
+    if (req.body.title) updateFields.title = req.body.title;
+    if (req.file) updateFields.path = "/uploads/" + req.file.filename;
+
+    // Update the ticket in the database
+    await tickets.updateOne(
+        { id: parseInt(ticketId) },
+        { $set: updateFields }
+    );  
+
+    res.redirect('/');
+});
+// postlude
+
 
 // Account Info
 app.get('/account', requireLogin, (req, res) => {

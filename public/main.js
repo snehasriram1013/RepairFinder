@@ -54,6 +54,7 @@ function closeNav() {
 //Handler to open/close menu when menu putton clicked
 $("#bar-button").on("click", bar);
 
+<<<<<<< HEAD
 // toggle the user dropdown
 $('#user-button').on('click', function(e) {
     e.stopPropagation();               // prevent the click from bubbling
@@ -65,3 +66,5 @@ $('#user-button').on('click', function(e) {
     $('#user-dropdown').hide();
   });
   
+=======
+>>>>>>> 2efd79f2c07fa09338762c59fcd8c9dc1e2e9cff

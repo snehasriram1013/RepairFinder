@@ -19,14 +19,22 @@
     <%- include("partials/error.ejs") %>
         <% if (allTickets.length > 0) { %>
             <% allTickets.forEach(function(ticket) { %>
+                <a href="/ticket/<%=ticket.id%>">
                 <section class="ticket <%=ticket.urgency%>" >
-                    <h3><a href="/ticket/<%=ticket.id%>">Ticket</a></h3> 
-                    <p><%= ticket.building %></p>
-
+                    <h3>Ticket #<%= ticket.id %></h3>
+                    <p><%= ticket.building%><p> 
                      <% if (ticket.path) { %>
-                            <img class="ticketImg" src="<%=ticket.path%>" alt="Uploaded file for <%= ticket.title %>">
+                            <img class="ticketImg" src="<%=ticket.path%>" alt="file: <%= ticket.title %>">
                     <% } %>
+                    
+                    <form method="POST" action='/delete-ticket'>
+                        <input type="checkbox" id="dataResolved <%= ticket.id %>" name="resolved" value="resolved?">
+                        <label for="dataResolved <%= ticket.id %>">resolved?</label>
+                        <input type="hidden" name="ticketId" value="<%= ticket.id %>">
+                        <button type="submit">Submit</button>
+                    </form>
                 </section>
+                </a>
             <% })} %>
 
 </main>

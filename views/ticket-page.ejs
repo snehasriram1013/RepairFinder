@@ -24,6 +24,60 @@
     <p>Due: <%= due %></p>
     <p>Details: <%= instructions %></p>
 
+    <form class="newticket" id="ticket-form" method="POST" action="/update-ticket" enctype="multipart/form-data">
+        <input type="hidden" name="ticketId" value="<%= id %>">
+        <p><label>Requestor Name: <input name="requestor"></label></p>
+        <p><label>Phone #: <input type=tel name="phone"></label></p>
+        <p><label>E-mail address: <input type=email name="addr"></label></p>
+        <p><label>Building/Facility Name:
+            <select name="building">
+                <option value="">Select building</option>
+                <option value="Severance">Severance</option>
+                <option value="Claflin">Claflin</option>
+                <option value="Tower">Tower Court</option>
+                <option value="Lake House">Lake House</option>
+                <option value="McAfee">McAfee</option>
+                <option value="Bates">Bates</option>
+                <option value="Freeman">Freeman</option>
+                <option value="Pomeroy">Pomeroy</option>
+                <option value="Cazenove">Cazenove</option>
+                <option value="Shafer">Shafer</option>
+                <option value="Beebe">Beebe</option>
+                <option value="Munger">Munger</option>
+                <option value="Science Center">Science Center</option>
+                <option value="Lulu">Lulu</option>
+                <option value="Clapp">Clapp Library</option>
+            </select>
+        </label></p>
+        <p><label>Urgency:
+            <select name="urgency">
+                <option value="">Select urgency</option>
+                <option value="minimal">1 (not urgent)</option>
+                <option value="bit">2 (a bit urgent)</option>
+                <option value="decent">3 (decently urgent)</option>
+                <option value="pretty">4 (pretty urgent)</option>
+                <option value="very">5 (very urgent)</option>
+            </select>
+        </label></p>
+        <p><label>Date of Request:
+            <input name="due" type="datetime-local">
+        </label></p>
+        <p><label>Repair Requested:
+            <textarea rows="4" cols="35" name="instructions"></textarea>
+        </label></p>
+        <p>
+            <label for="title">Title of Photo Upload: 
+                <input type="text" name="title" placeholder="photo title">
+            </label>
+        </p>
+        <p>
+            <label>Photo of Repair:  
+                <input type="file" accept="image/*" name="updated_file" >
+            </label>
+        </p>
+        <p><button type="submit">Submit Ticket</button></p>
+    </form>
+
 </main>
 
 <%- include("partials/foot.ejs") %>
