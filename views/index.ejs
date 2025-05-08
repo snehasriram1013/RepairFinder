@@ -28,8 +28,8 @@
                     <% } %>
                     
                     <form method="POST" action='/delete-ticket'>
-                        <input type="checkbox" id="dataResolved" name="dataResolved" value="resolved?">
-                        <label for="dataResolved">resolved?</label>
+                        <input type="checkbox" id="dataResolved <%= ticket.id %>" name="resolved" value="resolved?">
+                        <label for="dataResolved <%= ticket.id %>">resolved?</label>
                         <input type="hidden" name="ticketId" value="<%= ticket.id %>">
                         <button type="submit">Submit</button>
                     </form>
