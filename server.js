@@ -131,20 +131,50 @@ app.get('/my-tickets', requireLogin, async (req, res) => {
 
 // Search
 app.get('/search', async (req, res) => {
-  const { search, building, urgency } = req.query;
-  const db   = await Connection.open(mongoUri, 'tickets');
-  const col  = db.collection('tickets');
-  const q    = {};
-  if (search && search.length>1) q.instructions = { $regex: search, $options: 'i' };
-  if (building && building!=='All') q.building = building;
-  if (urgency && urgency!=='All')   q.urgency  = urgency;
-  const found = await col.find(q).toArray();
-  res.render('index.ejs', {
-    allTickets:    found,
-    buildings,
-    urgencyLevels: urgencies,
-    error:         found.length ? '' : 'No results found'
-  });
+    const query = req.query.search;
+    const build = req.query.building;
+    const urg = req.query.urgency;
+
+    console.log(build, urg);
+
+    const db = await Connection.open(mongoUri, 'tickets');
+    const tickets = db.collection("tickets");
+
+    let qVal = {$exists: true};
+
+    // set search query value
+    if (query.length > 1){
+        qVal = {$regex:`${query}`};
+    }
+
+    //set building value
+    let buildVal = {$exists: true};
+    if (build != "0"){
+        buildVal = buildings[Number(build)];
+    }
+    // set urgency value
+    let urgVal = {$exists: true};
+    if (urg != "0"){
+        urgVal = urgencies[Number(urg)];
+    }
+
+    let ticketsList = await tickets.find({instructions: qVal, 
+                                         building: buildVal, 
+                                         urgency: urgVal})
+                                         .toArray();
+
+    if (ticketsList.length == 0){
+        res.render('index.ejs', {allTickets: ticketsList, 
+                                 buildings: buildings, 
+                                 urgencyLevels: urgencies, 
+                                 error:'No results found'});
+    }else{
+        res.render('index.ejs', {allTickets: ticketsList, 
+                                 buildings: buildings, 
+                                 urgencyLevels: urgencies, 
+                                 error:''});
+    }
+
 });
 
 // Delete
@@ -170,10 +200,19 @@ app.post('/update-ticket', requireLogin, upload.single('updated_file'), async (r
 
 // Ticket detail
 app.get('/ticket/:ticket_id_number', async (req, res) => {
-  const id     = parseInt(req.params.ticket_id_number,10);
-  const db     = await Connection.open(mongoUri, 'tickets');
-  const ticket = await db.collection('tickets').findOne({ id });
-  res.render('ticket-page.ejs', ticket);
+    const ticket_id_number = req.params.ticket_id_number;
+    const db = await Connection.open(mongoUri, 'tickets');
+    const tickets = db.collection('tickets');
+    let ticket = await tickets.find({id: parseInt(ticket_id_number)}).toArray();
+    console.log(ticket);
+    return res.render('ticket-page.ejs',
+                      {id: `${ticket[0].id}`, 
+                       image: `${ticket[0].path}`,
+                       requestor: `${ticket[0].requestor}`,
+                       building: `${ticket[0].building}`,
+                       urgency: `${ticket[0].urgency}`,
+                       due: `${ticket[0].due}`,
+                       instructions: `${ticket[0].instructions}`}); 
 });
 
 // Admin-only
