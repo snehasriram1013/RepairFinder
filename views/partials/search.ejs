@@ -1,18 +1,18 @@
 <!--<form method="GET" action="/people-born-in-month/">-->
-<form method="GET" action="/search/">
-    <label for="bar" class="visually-hidden">Search:</label>
-    <input id="bar" type="text" placeholder="Search tickets.." name="search">
-    <label>: <select required name="building">
-                <option value="" selected disabled hidden>Choose building</option>
-                <% buildings.forEach( (mn, index) => { %>
-                <option value="<%= index %>"><%= mn %></option>
-                <% }) %>
+    <form method="GET" action="/search/">
+        <label for="bar" class="visually-hidden">Search:</label>
+        <input id="bar" type="text" placeholder="Search tickets.." name="search">
+        <label>: <select required name="building">
+                    <option value="" selected disabled hidden>Choose building</option>
+                    <% buildings.forEach( (mn, index) => { %>
+                    <option value="<%= index %>"><%= mn %></option>
+                    <% }) %>
+        </select> </label>
+        <label>: <select required name="urgency">
+                    <option value="" selected disabled hidden>Choose urgency</option>
+                    <% urgencyLevels.forEach( (mn, index) => { %>
+                    <option value="<%= index %>"><%= mn %></option>
+                    <% }) %>
     </select> </label>
-    <label>: <select required name="urgency">
-                <option value="" selected disabled hidden>Choose urgency</option>
-                <% urgencyLevels.forEach( (mn, index) => { %>
-                <option value="<%= index %>"><%= mn %></option>
-                <% }) %>
-</select> </label>
-    <button type="submit">search</button>
-</form>
+        <button type="submit">search</button>
+    </form>

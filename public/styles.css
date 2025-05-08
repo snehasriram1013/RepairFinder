@@ -311,3 +311,67 @@ a:link{
     white-space: nowrap; 
     width: 1px; 
 }
+
+/* ==== Admin Dashboard Spacing & Layout ==== */
+.admin-dashboard .dashboard-content {
+    /* pad the whole content area */
+    padding: 2rem 3rem;
+  }
+  
+  .admin-dashboard .dashboard-header {
+    /* align title + count in one row with space between */
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 2rem;
+  }
+  
+  .admin-dashboard .dashboard-header h1 {
+    /* remove extra margins */
+    margin: 0;
+  }
+  
+  .admin-dashboard .ticket-count {
+    font-size: 1.2rem;
+  }
+  
+  /* wrapper to allow horizontal scroll and add top/bottom gap */
+  .admin-dashboard .dashboard-table-wrapper {
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  
+  /* style table: full width, separate rows, spacing between */
+  .admin-dashboard .tickets-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem; /* vertical gap between rows */
+  }
+  
+  .admin-dashboard .tickets-table th,
+  .admin-dashboard .tickets-table td {
+    border: 1px solid #ddd;
+    padding: 0.75rem 1rem;
+    background: #fff;
+  }
+  
+  .admin-dashboard .tickets-table thead th {
+    background-color: #f7f7f7;
+  }
+  
+  .admin-dashboard .tickets-table tr:hover td {
+    background-color: #eef5fb;
+  }
+  .error-banner {
+    margin: 1em auto;
+    padding: 0.75em 1em;
+    max-width: 600px;
+    background-color: #fdecea;
+    color: #611a15;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  

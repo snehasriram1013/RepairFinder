@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css"
+  />
+  <link rel="stylesheet" href="/styles.css"/>
+  <title>About RepairFinder</title>
+</head>
+<body>
+  <%- include('partials/head.ejs') %>
+
+  <main class="about-page">
+    <%- include('partials/sidebar.ejs') %>
+
+    <section class="about-content">
+      <h1>About RepairFinder</h1>
+
+      <h2>Why We Built This</h2>
+      <p>
+        On busy campuses, maintenance requests can get lost in the outdated system, and take too much time to get resolved. 
+        <strong>RepairFinder</strong> centralizes everything into a simple ticketing system,
+        so students can report issues in seconds, and facilities staff can track and resolve
+        them efficiently.
+      </p>
+
+      <h2>How to Use</h2>
+      <ol>
+        <li>
+          <strong>Log in</strong> with your student or admin account (top-right user icon).
+        </li>
+        <li>
+          <strong>Students:</strong> Click “Add Ticket” in the sidebar, fill out the form,
+          and hit Submit. You can view your open requests under “My Tickets.”
+        </li>
+        <li>
+          <strong>Admins:</strong> Head to the “Admin Dashboard” to see every ticket,
+          sorted by urgency. Click a ticket to view details or update its status.
+        </li>
+        <li>
+          Use the <strong>Search</strong> box on the Dashboard to filter by keywords,
+          building, or urgency level.
+        </li>
+        <li>
+          When a repair is complete, admins can close or delete the ticket to keep the queue fresh.
+        </li>
+      </ol>
+
+      
+    </section>
+  </main>
+
+  <%- include('partials/foot.ejs') %>
+</body>
+</html>

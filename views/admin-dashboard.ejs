@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css"
+  />
+  <link rel="stylesheet" href="/styles.css"/>
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <%- include('partials/head.ejs') %>
+  <main class="admin-dashboard">
+    <%- include('partials/sidebar.ejs') %>
+
+    <section class="dashboard-content">
+      <div class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p class="ticket-count">
+          Total tickets: <strong><%= allTickets.length %></strong>
+        </p>
+      </div>
+
+      <div class="dashboard-table-wrapper">
+        <table class="tickets-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Requestor</th>
+              <th>Building</th>
+              <th>Urgency</th>
+              <th>Date Added</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% allTickets.forEach(ticket => { %>
+            <tr>
+              <td><%= ticket.id %></td>
+              <td><%= ticket.requestor %></td>
+              <td><%= ticket.building %></td>
+              <td class="urgency <%= ticket.urgency %>">
+                <%= ticket.urgency.charAt(0).toUpperCase() + ticket.urgency.slice(1) %>
+              </td>
+              <td><%= new Date(ticket.due).toLocaleString() %></td>
+              <td><%= ticket.instructions %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <%- include('partials/foot.ejs') %>
+</body>
+</html>
