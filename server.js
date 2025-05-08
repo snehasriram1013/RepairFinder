@@ -217,10 +217,36 @@ app.post("/form-input-post/",  upload.single("file"), async (req, res) => {
 app.post('/delete-ticket', async (req, res) => {
     console.log("DELETING TICKET");
     const ticketId = req.body.ticketId;
-    const isResolved = req.body.dataResolved === 'resolved?';
+    // const isResolved = req.body.dataResolved === 'resolved?';
     const db = await Connection.open(mongoUri, 'tickets');
     const tickets = db.collection('tickets');
     tickets.deleteOne({ id: parseInt(ticketId) })
+
+    res.redirect('/');
+});
+
+//to update a ticket in the database and redisplay
+app.post('/update-ticket', upload.single("updated_file"), async (req, res) => {
+    console.log("UPDATING TICKET");
+    console.log(req.body);
+    const ticketId = req.body.ticketId;
+    const db = await Connection.open(mongoUri, 'tickets');
+    const tickets = db.collection('tickets');
+    
+    const updateFields = {};
+    if (req.body.requestor) updateFields.requestor = req.body.requestor;
+    if (req.body.building) updateFields.building = req.body.building;
+    if (req.body.urgency) updateFields.urgency = req.body.urgency;
+    if (req.body.due) updateFields.due = req.body.due;
+    if (req.body.instructions) updateFields.instructions = req.body.instructions;
+    if (req.body.title) updateFields.title = req.body.title;
+    if (req.file) updateFields.path = "/uploads/" + req.file.filename;
+
+    // Update the ticket in the database
+    await tickets.updateOne(
+        { id: parseInt(ticketId) },
+        { $set: updateFields }
+    );  
 
     res.redirect('/');
 });
