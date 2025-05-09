@@ -15,7 +15,7 @@ const cs304          = require('./cs304');
 const authRouter     = require('./routes/auth');
 const { requireLogin, requireAdmin } = authRouter;
 
-// Multer setup (unchanged)
+// Multer setup (unchanged from cs304 example)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads'),
   filename:    (req, file, cb) => {
@@ -65,6 +65,10 @@ const buildings = ['All','Severance','Claflin','Tower','Lake House','McAfee','Ba
   'Freeman','Pomeroy','Cazenove','Shafer','Beebe','Munger','Science Center','Lulu','Clapp Library'];
 const urgencies  = ['All','minimal','bit','decent','pretty','very'];
 
+/**
+ * Insert a user created ticket into the mongoDB database 
+ * @param {Object} data - ticket data
+ */
 async function insertTicket(data) {
   const db      = await Connection.open(mongoUri, 'tickets');
   const tickets = db.collection('tickets');
@@ -109,6 +113,8 @@ app.get('/account', requireLogin, (req, res) =>
 
 // Student-only
 app.get('/new-ticket', requireLogin, (req, res) => res.render('form.ejs', {mail: req.session.user.email}));
+
+// Create new ticket and send to database
 app.post('/form-input-post/', requireLogin, upload.single('file'), async (req, res) => {
   const db      = await Connection.open(mongoUri, 'tickets');
   const list    = await db.collection('tickets').find({}).toArray();
@@ -232,7 +238,6 @@ app.get('/admin-dashboard',
     });
   }
 );
-
 
   
 // this is last, because it never returns
