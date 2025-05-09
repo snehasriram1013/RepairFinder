@@ -22,3 +22,6 @@ Directions for use:
 3. Within the sidebar, click "Home" to go to the dashboard of all open tickets. This has a search bar that allows for filtering of tickets by keywords, building, or urgency level.
 4. Click on any ticket to view its details, and/or make edits to its information
 5. You can close or delete the ticket to keep the queue fresh using the check box on each dashboard ticket
+
+Link to Demo Video: 
+https://drive.google.com/file/d/11mSkJauvt3dFoAhR31FL6K2fXzEWxKlE/view?usp=sharing
