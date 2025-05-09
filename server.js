@@ -112,6 +112,7 @@ app.get('/new-ticket', requireLogin, (req, res) => res.render('form.ejs', {mail:
 app.post('/form-input-post/', requireLogin, upload.single('file'), async (req, res) => {
   const db      = await Connection.open(mongoUri, 'tickets');
   const list    = await db.collection('tickets').find({}).toArray();
+  // not the most efficient way to get unique ids, would change in future
   const idVal   = list.length + 1;
   await insertTicket({ ...req.body, id: idVal, file: req.file });
   res.redirect('/');
