@@ -116,10 +116,12 @@ app.post('/form-input-post/', requireLogin, upload.single('file'), async (req, r
   await insertTicket({ ...req.body, id: idVal, file: req.file });
   res.redirect('/');
 });
+
+//my tickets page
 app.get('/my-tickets', requireLogin, async (req, res) => {
   const db    = await Connection.open(mongoUri, 'tickets');
   const list  = await db.collection('tickets')
-                        .find({ requestor: req.session.user.name })
+                        .find({ address: req.session.user.email })
                         .toArray();
   res.render('my-tickets.ejs', {
     allTickets:    list,
@@ -179,7 +181,7 @@ app.get('/search', async (req, res) => {
 
 // Delete
 app.post('/delete-ticket', async (req, res) => {
-  const id      = parseInt(req.body.ticketId, 10);
+  const id      = parseInt(req.body.ticketId);
   const db      = await Connection.open(mongoUri, 'tickets');
   await db.collection('tickets').deleteOne({ id });
   res.redirect('/');
@@ -187,7 +189,7 @@ app.post('/delete-ticket', async (req, res) => {
 
 // Update
 app.post('/update-ticket', requireLogin, upload.single('updated_file'), async (req, res) => {
-  const ticketId = parseInt(req.body.ticketId,10);
+  const ticketId = parseInt(req.body.ticketId);
   const db       = await Connection.open(mongoUri, 'tickets');
   const tickets  = db.collection('tickets');
   const update   = {};
