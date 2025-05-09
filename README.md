@@ -23,5 +23,4 @@ Directions for use:
 4. Click on any ticket to view its details, and/or make edits to its information
 5. You can close or delete the ticket to keep the queue fresh using the check box on each dashboard ticket
 
-Link to Demo Video: 
-https://drive.google.com/file/d/11mSkJauvt3dFoAhR31FL6K2fXzEWxKlE/view?usp=sharing
+Note: Demo video has been emailed by Lily
