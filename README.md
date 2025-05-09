@@ -5,7 +5,7 @@ Overview:
 - RepairFinder is a broken facilities reporting app designed to streamline the repair request/resolution process within college campus communities.
 
 Created by:
-- Sneha Sriram, Quareeba Anifowoshe, Lily Millard
+- Sneha Sriram, Quareebah Anifowoshe, Lily Millard
 
 Status (new since Alpha):
 - We have finished implementing login and sessions, searching the database, updating tickets, uploading images with tickets, and individual ticket pages.
