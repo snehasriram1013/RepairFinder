@@ -21,7 +21,7 @@
         <form class="newticket" id="ticket-form" method="POST" action="/form-input-post/" enctype="multipart/form-data">
             <p><label>Requestor Name: <input name="requestor"></label></p>
             <p><label>Phone #: <input type=tel name="phone"></label></p>
-            <p><label>E-mail address: <input type=email name="addr"></label></p>
+            <p><label>E-mail address: <input type=email name="addr" value="<%= mail %>"></label></p>
             <p><label>Building/Facility Name:
                 <select name="building">
                     <option value="">Select building</option>

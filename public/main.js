@@ -51,7 +51,7 @@ function closeNav() {
     navClicked = false;
 }
 
-//Handler to open/close menu when menu putton clicked
+//Handler to open/close menu when menu button clicked
 $("#bar-button").on("click", bar);
 
 // toggle the user dropdown
@@ -64,4 +64,5 @@ $('#user-button').on('click', function(e) {
   $(document).on('click', function() {
     $('#user-dropdown').hide();
   });
+  
   

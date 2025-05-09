@@ -108,7 +108,7 @@ app.get('/account', requireLogin, (req, res) =>
 );
 
 // Student-only
-app.get('/new-ticket', requireLogin, (req, res) => res.render('form.ejs'));
+app.get('/new-ticket', requireLogin, (req, res) => res.render('form.ejs', {mail: req.session.user.email}));
 app.post('/form-input-post/', requireLogin, upload.single('file'), async (req, res) => {
   const db      = await Connection.open(mongoUri, 'tickets');
   const list    = await db.collection('tickets').find({}).toArray();
@@ -201,7 +201,7 @@ app.post('/update-ticket', requireLogin, upload.single('updated_file'), async (r
 });
 
 // Ticket detail
-app.get('/ticket/:ticket_id_number', async (req, res) => {
+app.get('/ticket/:ticket_id_number', requireLogin, async (req, res) => {
     const ticket_id_number = req.params.ticket_id_number;
     const db = await Connection.open(mongoUri, 'tickets');
     const tickets = db.collection('tickets');
