@@ -14,7 +14,7 @@ Status (new since Alpha):
 - Login/sessions allows for functionality of "my tickets" page, which gets all tickets created by a particular user, and locks the majority of pages with required login
 
 Status (overall):
-- We have completed a large portion of our original goal. If we had more time, we would have been able to incorporate an admin page sorted by priority and a map interface. Additionally, admins would have select privileges (ex. resolving ticket) that are currently available to all users (**NOTE: current "About" page assumes full functionality with admin login)
+- We have completed a large portion of our original goal. If we had more time, we would have been able to incorporate an admin page sorted by priority and a map interface. Admins would also have select privileges (ex. resolving ticket) that are currently available to all users. Additionally, we would allow resolved tickets to remain in the database, just not visible on the dashboard. (**NOTE: current "About" page assumes full functionality with admin login)
 
 Directions for use:
 1. Log in with your student account

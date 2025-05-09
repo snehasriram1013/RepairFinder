@@ -1,4 +1,4 @@
-const navWidth = 225;
+
 let navClicked = false;
 
 /*
@@ -21,8 +21,8 @@ Return Value: None
 Effects: Narows page elements to accommodate sidebar menu
 */
 function openNav() {
-    $("#sidenav").width(navWidth);
-    $("main").css("margin-left", navWidth + "px");
+    $("#sidenav").width(225);
+    $("main").css("margin-left", "225px");
     $("main").css('width', '80%');
     $("#bar-button").css('background-color', 'rgb(14, 14, 99)');
     $("#bar-button").css('color', 'white');
