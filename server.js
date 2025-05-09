@@ -193,7 +193,7 @@ app.post('/update-ticket', requireLogin, upload.single('updated_file'), async (r
   const db       = await Connection.open(mongoUri, 'tickets');
   const tickets  = db.collection('tickets');
   const update   = {};
-  ['requestor','building','urgency','due','instructions','title']
+  ['due','instructions','title']
     .forEach(f=> req.body[f] && (update[f]=req.body[f]));
   if (req.file) update.path = '/uploads/' + req.file.filename;
   await tickets.updateOne({ id: ticketId }, { $set: update });
